@@ -34,28 +34,44 @@ class ArticleController extends Controller
         return response()
             ->json(['data' => $article]);
     }
-    public function show(Article $article){
-        return response()->json(['data' => $article]);
-    }
 
-    public function update(Request $request, Article $article)
-    {
-        
-        $input = $request->all();
-        return response()->json(['data' => $input]);
-        $validator = Validator::make($request->all(),[
-            'title' => ['required','string'],
-            'body' => ['required']
-        ]);
-        
-        if($validator->fails()){
-            return response()->json($validator->errors());       
+    public function show($id){
+        $article = Article::find($id);
+        if ($article){
+            return response()->json(['data' => $article]);
         }
 
-        
-        $article->update($input);
+        return response([
+            'status' => 'Not Found',
+            'message' => 'Data Not Found',
+        ], 404);
 
-        return response()->json(['data' => $article]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $article = Article::find($id);
+        if ($article){
+            $validator = Validator::make($request->all(),[
+                'title' => ['required','string'],
+                'body' => ['required']
+            ]);
+            
+            if($validator->fails()){
+                return response()->json($validator->errors());       
+            }
+            $input = $request->all();
+            
+            $article->update($input);
+    
+            return response()->json(['data' => $article]);
+        }
+
+        return response([
+            'status' => 'Not Found',
+            'message' => 'Data Not Found',
+        ], 404);
+        
     }
 
 
