@@ -11,7 +11,10 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        return auth()->user()->articles;
+        return response()->json([
+            'status' => 'success',
+            'data' => auth()->user()->articles
+        ]);
     }
 
     public function store(Request $request)
@@ -32,13 +35,19 @@ class ArticleController extends Controller
          ]);
 
         return response()
-            ->json(['data' => $article]);
+            ->json([
+                'status' => 'success',
+                'data' => $article
+            ]);
     }
 
     public function show($id){
         $article = Article::find($id);
         if ($article){
-            return response()->json(['data' => $article]);
+            return response()->json([
+                'status' => 'success',
+                'data' => $article
+            ]);
         }
 
         return response([
@@ -64,7 +73,10 @@ class ArticleController extends Controller
             
             $article->update($input);
     
-            return response()->json(['data' => $article]);
+            return response()->json([
+                'status' => 'success',
+                'data' => $article
+            ]);
         }
 
         return response([
@@ -75,9 +87,19 @@ class ArticleController extends Controller
     }
 
 
-    public function destroy(Article $article)
+    public function destroy($id)
     {
-        $article->delete();
-        return response()->json(['message' => 'successfully delete data']);
+        $article = Article::find($id);
+        if ($article){
+            $article->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'successfully delete data'
+            ]);
+        }
+        return response([
+            'status' => 'Not Found',
+            'message' => 'Data Not Found',
+        ], 404);
     }
 }
