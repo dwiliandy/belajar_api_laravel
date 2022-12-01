@@ -19,7 +19,9 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors());       
+            return response()->json([
+              'errors' => $validator->errors()
+            ],422);       
         }
 
         $user = User::create([
@@ -29,7 +31,7 @@ class AuthController extends Controller
          ]);
 
         return response()
-            ->json(['data' => $user]);
+            ->json(['message' => $user],201);
     }
 
     public function login(Request $request)
@@ -45,7 +47,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
-            ->json(['user' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
+            ->json(['user' => $user,'access_token' => $token, 'token_type' => 'Bearer'],200);
     }
 
     public function logout()

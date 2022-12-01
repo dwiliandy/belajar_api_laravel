@@ -12,9 +12,8 @@ class ArticleController extends Controller
     public function index()
     {
         return response()->json([
-            'status' => 'success',
             'data' => auth()->user()->articles
-        ]);
+        ],200);
     }
 
     public function store(Request $request)
@@ -25,7 +24,9 @@ class ArticleController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors());       
+            return response()->json([
+              'errors' => $validator->errors()
+            ],422);       
         }
 
         $article = Article::create([
@@ -34,24 +35,20 @@ class ArticleController extends Controller
             'user_id' => auth()->user()->id
          ]);
 
-        return response()
-            ->json([
-                'status' => 'success',
-                'data' => $article
-            ]);
+        return response()->json([
+              'data' => $article
+            ],201);
     }
 
     public function show($id){
         $article = Article::find($id);
         if ($article){
             return response()->json([
-                'status' => 'success',
-                'data' => $article
-            ]);
+              'data' => $article
+            ],200);
         }
 
         return response([
-            'status' => 'Not Found',
             'message' => 'Data Not Found',
         ], 404);
 
@@ -67,16 +64,17 @@ class ArticleController extends Controller
             ]);
             
             if($validator->fails()){
-                return response()->json($validator->errors());       
+              return response()->json([
+                'errors' => $validator->errors()
+              ],422);          
             }
             $input = $request->all();
             
             $article->update($input);
     
             return response()->json([
-                'status' => 'success',
-                'data' => $article
-            ]);
+              'data' => $article
+            ],200);
         }
 
         return response([
@@ -93,12 +91,10 @@ class ArticleController extends Controller
         if ($article){
             $article->delete();
             return response()->json([
-                'status' => 'success',
                 'message' => 'successfully delete data'
-            ]);
+            ],204);
         }
         return response([
-            'status' => 'Not Found',
             'message' => 'Data Not Found',
         ], 404);
     }
